@@ -13,7 +13,7 @@
 <h1>Interface ToNormalizedPoolOptions</h1></div>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">ToNormalizedPoolOptions</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#identity">identity</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;email&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;cognito_sub&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;cognito_username&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;custom&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#provisionedby">provisionedBy</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;cdk&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;console&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;terraform&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;unknown&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#reproducible">reproducible</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#storesprofiledataincognito">storesProfileDataInCognito</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in aws/src/normalize.ts:3</li></ul></aside>
+<li>Defined in <a href="https://github.com/tannerbyers/cognito-kit/blob/main/packages/aws/src/normalize.ts#L3">aws/src/normalize.ts:3</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -35,28 +35,28 @@
 <div class="tsd-comment tsd-typography"><p>What the application uses as its canonical identity. Defaults to <code>&quot;cognito_sub&quot;</code>.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in aws/src/normalize.ts:9</li></ul></aside></section>
+<li>Defined in <a href="https://github.com/tannerbyers/cognito-kit/blob/main/packages/aws/src/normalize.ts#L9">aws/src/normalize.ts:9</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="provisionedby"><code class="tsd-tag">Optional</code><span>provisioned<wbr/>By</span><a href="#provisionedby" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">provisionedBy</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;cdk&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;console&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;terraform&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;unknown&quot;</span></div>
 <div class="tsd-comment tsd-typography"><p>How the pool is provisioned. Defaults to <code>&quot;unknown&quot;</code> when imported from AWS.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in aws/src/normalize.ts:5</li></ul></aside></section>
+<li>Defined in <a href="https://github.com/tannerbyers/cognito-kit/blob/main/packages/aws/src/normalize.ts#L5">aws/src/normalize.ts:5</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="reproducible"><code class="tsd-tag">Optional</code><span>reproducible</span><a href="#reproducible" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">reproducible</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Whether the pool is reproducible from code. Defaults to <code>false</code> for AWS-imported pools.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in aws/src/normalize.ts:7</li></ul></aside></section>
+<li>Defined in <a href="https://github.com/tannerbyers/cognito-kit/blob/main/packages/aws/src/normalize.ts#L7">aws/src/normalize.ts:7</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="storesprofiledataincognito"><code class="tsd-tag">Optional</code><span>stores<wbr/>Profile<wbr/>Data<wbr/>In<wbr/>Cognito</span><a href="#storesprofiledataincognito" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">storesProfileDataInCognito</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Whether the application stores profile data in Cognito. Defaults to <code>true</code> when custom attributes exist.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in aws/src/normalize.ts:11</li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/tannerbyers/cognito-kit/blob/main/packages/aws/src/normalize.ts#L11">aws/src/normalize.ts:11</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
