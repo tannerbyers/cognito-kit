@@ -34,6 +34,12 @@ export interface UserPoolInfo {
     domain: string
     managedLogin?: boolean
   }
+  /** Sign-in aliases (e.g. `["email"]` for legacy alias pools). */
+  aliasAttributes?: string[]
+  /** Username attributes (e.g. `["email"]` for email-as-username pools). */
+  usernameAttributes?: string[]
+  /** Whether deletion protection is active. */
+  deletionProtection?: boolean
 }
 
 /** A deliberately small slice of what `DescribeUserPoolClient` returns. */
@@ -50,6 +56,8 @@ export interface UserPoolClientInfo {
   idTokenValidity?: number
   accessTokenValidity?: number
   refreshTokenValidity?: number
+  /** Explicit auth flows (e.g. `["ALLOW_USER_PASSWORD_AUTH"]`). */
+  explicitAuthFlows?: string[]
 }
 
 export interface UserPoolSummary {

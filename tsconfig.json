@@ -19,6 +19,7 @@
     "noUnusedParameters": true,
     "baseUrl": ".",
     "paths": {
+      "@cognito-kit/aws": ["packages/aws/src/index.ts"],
       "@cognito-kit/core": ["packages/core/src/index.ts"],
       "@cognito-kit/runtime": ["packages/runtime/src/index.ts"],
       "@cognito-kit/local-auth": ["packages/local-auth/src/index.ts"],

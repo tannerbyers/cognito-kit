@@ -26,6 +26,8 @@ Options:
 
 - `--file <path>` — path to a normalized pool JSON document
 - `--config <path>` — path to an auth.config.ts (developer-facing config)
+- `--pool <id>` — Cognito user pool id to diagnose (requires @cognito-kit/aws)
+- `--region <region>` — AWS region for --pool
 
 ## dev
 
@@ -48,7 +50,12 @@ Arguments:
 
 ## migrate
 
-Analyze and plan a Cognito migration (planned for a future release)
+Analyze a migration between two Cognito configurations
+
+Options:
+
+- `--from <path>` — source configuration (normalized pool document or auth config)
+- `--to <path>` — target configuration (normalized pool document or auth config)
 
 ## deploy
 

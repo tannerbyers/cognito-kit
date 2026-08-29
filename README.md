@@ -31,9 +31,18 @@ Same application-facing contract: OIDC discovery, JWKS, authorization code + PKC
 | `cognito-kit doctor` | Diagnose a Cognito config (offline) |
 | `cognito-kit dev` | Run local OIDC server |
 | `cognito-kit test` | Validate your config |
+| `cognito-kit migrate` | Analyze a migration between two configs |
 
 ```bash
 npx cognito-kit doctor --file ./tests/fixtures/bad-cognito.json
+npx cognito-kit migrate --from ./auth/current.json --to ./auth/target.json
+```
+
+With AWS access:
+
+```bash
+# requires @cognito-kit/aws (installed automatically with the CLI)
+npx cognito-kit doctor --pool <user-pool-id> --region us-east-1
 ```
 
 ## Docs

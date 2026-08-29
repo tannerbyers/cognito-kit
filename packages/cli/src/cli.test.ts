@@ -1,11 +1,45 @@
-import { mkdtempSync, readFileSync } from "node:fs"
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { initCommand } from "./commands/init.js"
-import { formatReport } from "./commands/doctor.js"
-import { loadNormalizedPool } from "./load.js"
+import { doctorCommand, formatReport } from "./commands/doctor.js"
+import { migrateCommand, formatMigration } from "./commands/migrate.js"
+import { loadNormalizedPool, loadPoolLike } from "./load.js"
 import { renderAuthConfigFile, renderUsersFile } from "./templates.js"
+
+vi.mock("@cognito-kit/aws", async () => {
+  const core = await vi.importActual<typeof import("@cognito-kit/core")>("@cognito-kit/core")
+  const pool = core.normalizeConfig(
+    core.defineAuth({
+      signIn: "email",
+      application: {
+        type: "web",
+        callbackUrls: ["http://localhost:3000/auth/callback"],
+        logoutUrls: ["http://localhost:3000"],
+      },
+    }),
+  )
+  return {
+    AwsCognitoControlPlane: class {
+      async describeUserPool() {
+        return { userPoolId: "us-east-1_AbCdE", name: "mock-pool" }
+      }
+      async listUserPoolClients() {
+        return [{ clientId: "c1", clientName: "app" }]
+      }
+      async describeUserPoolClient() {
+        return {
+          userPoolId: "us-east-1_AbCdE",
+          clientId: "c1",
+          clientName: "app",
+          generateSecret: true,
+        }
+      }
+    },
+    toNormalizedPool: () => pool,
+  }
+})
 
 describe("renderAuthConfigFile", () => {
   it("renders a web starter config", () => {
@@ -133,5 +167,85 @@ describe("loadNormalizedPool", () => {
 
   it("rejects malformed documents", () => {
     expect(() => loadNormalizedPool("/nonexistent.json")).toThrow()
+  })
+})
+
+describe("doctorCommand --pool", () => {
+  afterEach(() => {
+    process.exitCode = undefined
+  })
+
+  it("diagnoses a pool through the AWS adapter", async () => {
+    const report = await doctorCommand({ pool: "us-east-1_AbCdE", region: "us-east-1" })
+    expect(report.summary.critical).toBe(0)
+    expect(report.summary.warning).toBe(0)
+  })
+})
+
+describe("migrateCommand", () => {
+  afterEach(() => {
+    process.exitCode = undefined
+  })
+
+  it("compares two normalized pool documents", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "ck-migrate-"))
+    const from = join(dir, "from.json")
+    const to = join(dir, "to.json")
+    const url = new URL("../../../tests/fixtures/recommended.json", import.meta.url)
+    const recommended = readFileSync(url.pathname, "utf8")
+    writeFileSync(from, recommended, "utf8")
+    writeFileSync(
+      to,
+      JSON.stringify(
+        {
+          ...JSON.parse(recommended),
+          usernameConfiguration: { caseSensitive: true },
+        },
+        null,
+        2,
+      ),
+      "utf8",
+    )
+
+    const analysis = await migrateCommand({ from, to })
+    const change = analysis.changes.find((c) => c.path === "usernameConfiguration.caseSensitive")
+    expect(change?.impact).toBe("high")
+    expect(analysis.risks.some((r) => r.severity === "critical")).toBe(true)
+    expect(process.exitCode).toBe(1)
+  })
+})
+
+describe("formatMigration", () => {
+  it("renders changes and risks", () => {
+    const text = formatMigration({
+      changes: [
+        {
+          path: "signIn.email",
+          kind: "changed",
+          from: true,
+          to: false,
+          impact: "high",
+        },
+      ],
+      risks: [
+        {
+          path: "signIn",
+          severity: "critical",
+          message: "sign-in mode cannot be changed in place",
+        },
+      ],
+      summary: { low: 0, medium: 0, high: 1 },
+    })
+    expect(text).toContain("✗ [high] signIn.email")
+    expect(text).toContain("✗ sign-in mode cannot be changed in place")
+    expect(text).toContain("Summary: 0 low, 0 medium, 1 high impact changes")
+  })
+})
+
+describe("loadPoolLike", () => {
+  it("loads a normalized pool document", () => {
+    const url = new URL("../../../tests/fixtures/recommended.json", import.meta.url)
+    const pool = loadPoolLike(url.pathname)
+    expect(pool.provider).toBe("cognito")
   })
 })

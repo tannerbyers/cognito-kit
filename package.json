@@ -24,17 +24,22 @@
     "test:e2e": "pnpm build && node tests/e2e/run.mjs",
     "test:aws": "node tests/aws/run.mjs",
     "docs:generate": "pnpm build && typedoc && node scripts/generate-docs.mjs",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish",
     "dev": "node tests/e2e/demo.mjs"
   },
   "dependencies": {
     "cognito-kit": "workspace:*"
   },
   "devDependencies": {
+    "@cognito-kit/aws": "workspace:*",
     "@cognito-kit/core": "workspace:*",
     "@cognito-kit/infrastructure": "workspace:*",
     "@cognito-kit/local-auth": "workspace:*",
     "@cognito-kit/runtime": "workspace:*",
     "@cognito-kit/testing": "workspace:*",
+    "@changesets/cli": "^2.27.0",
     "@types/node": "^22.10.0",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
     "@typescript-eslint/parser": "^8.18.0",

@@ -29,8 +29,20 @@
     "commander": "^12.1.0",
     "jiti": "^2.4.0"
   },
+  "peerDependencies": {
+    "@cognito-kit/aws": ">=0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@cognito-kit/aws": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@cognito-kit/aws": "workspace:*",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

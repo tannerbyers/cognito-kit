@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { createJiti } from "jiti"
 import type { AuthConfig } from "@cognito-kit/core"
-import { parseNormalizedPoolConfig } from "@cognito-kit/core"
+import { normalizeConfig, parseNormalizedPoolConfig } from "@cognito-kit/core"
 import type { NormalizedPoolConfig } from "@cognito-kit/core"
 
 const jiti = createJiti(import.meta.url)
@@ -56,4 +56,25 @@ export function loadUsersFile(path: string): Array<{
     password: string
     claims?: Record<string, unknown>
   }>
+}
+
+/**
+ * Loads a "pool-like" source: either a normalized pool document (JSON) or a
+ * developer-facing auth config (`.json` or `.ts`). Used by `migrate`.
+ */
+export function loadPoolLike(path: string): NormalizedPoolConfig {
+  const resolved = resolve(path)
+  if (resolved.endsWith(".json")) {
+    const raw = JSON.parse(readFileSync(resolved, "utf8")) as Record<string, unknown>
+    if (raw.formatVersion === 1 && raw.provider === "cognito") {
+      return parseNormalizedPoolConfig(raw)
+    }
+    if ("signIn" in raw && "application" in raw) {
+      return normalizeConfig(raw as unknown as AuthConfig)
+    }
+    throw new Error(
+      `file at ${path} is neither a normalized pool document nor an auth config`,
+    )
+  }
+  return normalizeConfig(loadAuthConfig(resolved))
 }

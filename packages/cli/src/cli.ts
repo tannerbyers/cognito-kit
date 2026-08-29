@@ -4,7 +4,10 @@ import type { InitOptions } from "./commands/init.js"
 import { doctorCommand } from "./commands/doctor.js"
 import type { DoctorOptions } from "./commands/doctor.js"
 import { devCommand } from "./commands/dev.js"
+import type { DevOptions } from "./commands/dev.js"
 import { testCommand } from "./commands/test.js"
+import { migrateCommand } from "./commands/migrate.js"
+import type { MigrateOptions } from "./commands/migrate.js"
 import { stubCommand } from "./commands/stub.js"
 
 const VERSION = "0.1.0"
@@ -27,7 +30,7 @@ export function buildProgram(): Command {
     .option("--output <dir>", "output directory (default: ./auth)")
     .option("--yes", "use defaults for anything not provided (non-interactive)")
     .action((options: InitOptions) => {
-      void initCommand(options)
+      run(() => initCommand(options))
     })
 
   program
@@ -35,8 +38,10 @@ export function buildProgram(): Command {
     .description("Analyze a Cognito configuration and report dangerous or poor choices")
     .option("--file <path>", "path to a normalized pool JSON document")
     .option("--config <path>", "path to an auth.config.ts (developer-facing config)")
+    .option("--pool <id>", "Cognito user pool id to diagnose (requires @cognito-kit/aws)")
+    .option("--region <region>", "AWS region for --pool")
     .action((options: DoctorOptions) => {
-      void doctorCommand(options)
+      run(() => doctorCommand(options))
     })
 
   program
@@ -46,24 +51,30 @@ export function buildProgram(): Command {
     .option("--host <host>", "host to bind (default: 127.0.0.1)")
     .option("--issuer <url>", "issuer URL override")
     .option("--users <path>", "path to a users file (.json or .ts)")
-    .action(devCommand)
+    .action((options: DevOptions) => {
+      run(() => devCommand(options))
+    })
 
   program
     .command("test")
     .description("Validate an auth configuration")
     .argument("[config]", "path to the auth config file (default: ./auth/auth.config.ts)")
-    .action(testCommand)
+    .action((config?: string) => {
+      run(() => testCommand(config))
+    })
 
-  program
+program
     .command("migrate")
-    .description("Analyze and plan a Cognito migration (planned for a future release)")
-    .action(() => stubCommand("migrate"))
+    .description("Analyze a migration between two Cognito configurations")
+    .requiredOption("--from <path>", "source configuration (normalized pool document or auth config)")
+    .requiredOption("--to <path>", "target configuration (normalized pool document or auth config)")
+    .action((options: MigrateOptions) => {
+      run(() => migrateCommand(options))
+    })
 
   program
     .command("deploy")
-    .description(
-      "Deploy the generated infrastructure to your AWS account (planned for a future release)",
-    )
+    .description("Deploy the generated infrastructure to your AWS account (planned for a future release)")
     .action(() => stubCommand("deploy"))
 
   return program
@@ -72,4 +83,12 @@ export function buildProgram(): Command {
 function collect(value: string, previous: string[]): string[] {
   previous.push(value)
   return previous
+}
+
+/** Runs an async command handler, converting rejections into a clean exit. */
+function run(action: () => Promise<unknown>): void {
+  action().catch((err: unknown) => {
+    console.error(err instanceof Error ? err.message : String(err))
+    process.exitCode = 1
+  })
 }

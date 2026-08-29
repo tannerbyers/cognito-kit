@@ -1,6 +1,7 @@
 import { defineConfig } from "vitest/config"
 
 const alias = {
+  "@cognito-kit/aws": new URL("./packages/aws/src/index.ts", import.meta.url).pathname,
   "@cognito-kit/core": new URL("./packages/core/src/index.ts", import.meta.url).pathname,
   "@cognito-kit/runtime": new URL("./packages/runtime/src/index.ts", import.meta.url).pathname,
   "@cognito-kit/local-auth": new URL("./packages/local-auth/src/index.ts", import.meta.url).pathname,

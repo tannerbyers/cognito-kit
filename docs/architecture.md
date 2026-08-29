@@ -10,11 +10,12 @@
 
 | Package | Responsibility |
 | --- | --- |
-| `@cognito-kit/core` | Config model, normalization, validation, diagnostics, control-plane interface + fake |
+| `@cognito-kit/core` | Config model, normalization, validation, diagnostics, migration analysis, control-plane interface + fake |
 | `@cognito-kit/runtime` | JWT verification, normalized `AuthenticatedUser`, issuer discovery, session cookies |
 | `@cognito-kit/local-auth` | Local OIDC/OAuth2 dev server (not a Cognito emulator) |
 | `@cognito-kit/infrastructure` | CDK constructs that synthesize safe Cognito CloudFormation |
 | `@cognito-kit/testing` | Test helpers: tokens, users, issuers, fake control plane |
+| `@cognito-kit/aws` | AWS adapter: real control plane + normalized conversion (lazy SDK load) |
 | `cognito-kit` | CLI |
 
 ## Dependency rules
@@ -26,15 +27,16 @@
 | local-auth | jose |
 | infrastructure | aws-cdk-lib, constructs, core |
 | testing | core, runtime, jose |
-| cli | core, local-auth, commander, jiti |
+| aws | core, aws-sdk (lazy-loaded) |
+| cli | core, local-auth, commander, jiti (+ optional aws) |
 
 ## Data flow
 
 `defineAuth(config)` → `normalizeConfig` → `NormalizedPoolConfig` (plain JSON).
 
-Consumers of `NormalizedPoolConfig`: `diagnoseUserPool`, the CDK construct, `doctor --file`.
+Consumers of `NormalizedPoolConfig`: `diagnoseUserPool`, `analyzeMigration`, the CDK construct, `doctor --file`.
 
-A future AWS adapter converts AWS SDK responses into `NormalizedPoolConfig`.
+The AWS adapter converts AWS SDK responses into `NormalizedPoolConfig` via `toNormalizedPool`, so `doctor --pool` uses the same rules as local fixtures.
 
 ## Test layers
 
