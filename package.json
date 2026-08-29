@@ -25,7 +25,7 @@
     "test:aws": "node tests/aws/run.mjs",
     "docs:generate": "pnpm build && typedoc && node scripts/generate-docs.mjs",
     "changeset": "changeset",
-    "version-packages": "changeset version",
+    "version-packages": "changeset version && pnpm install --lockfile-only",
     "release": "pnpm build && changeset publish",
     "dev": "node tests/e2e/demo.mjs"
   },
