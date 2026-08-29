@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@cognito-kit/example-nextjs", "@cognito-kit/example-node-api", "@cognito-kit/tests"]
+  "ignore": ["@cognito-kit/example-nextjs", "@cognito-kit/example-node-api"]
 }
