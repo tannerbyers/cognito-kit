@@ -47,10 +47,11 @@ The AWS adapter converts AWS SDK responses into `NormalizedPoolConfig` via `toNo
 | Infra | `pnpm test:infra` | none |
 | Integration | `pnpm test:integration` | none |
 | E2E | `pnpm test:e2e` | local-auth + examples |
-| AWS (local emulator) | `pnpm test:aws --local` | Docker (cognito-local) |
+| AWS (local emulator) | `pnpm test:aws --local` | cognito-local (npm devDependency) |
 | AWS (real) | `pnpm test:aws` | `COGNITO_KIT_AWS_TESTS=1` + AWS account |
 
 The local emulator mode (`--local`) runs the same auth flow and runtime
-contract against cognito-local (a free Cognito emulator) and exercises the
-AWS adapter against a real HTTP API. It does not exercise CloudFormation
-deployment or actual Cognito behavior — those are real-AWS-only.
+contract against cognito-local (a free, open-source Cognito emulator) and
+exercises the AWS adapter against a real HTTP API. It does not exercise
+CloudFormation deployment or actual Cognito behavior — those are
+real-AWS-only.

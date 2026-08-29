@@ -8,14 +8,14 @@
  *                   Requires COGNITO_KIT_AWS_TESTS=1 + AWS credentials.
  *
  *   --local         Run the same flow against cognito-local: a free,
- *                   open-source Cognito emulator (by the LocalStack team)
- *                   running in Docker. No AWS account, no credentials, no
- *                   Docker for the rest of the suite.
+ *                   open-source Cognito emulator (by the LocalStack team).
+ *                   No AWS account, no credentials, no Docker.
  *
  *                   What --local validates:
- *                     - the full auth flow against a real HTTP Cognito API
- *                     - the runtime contract (OIDC discovery + JWKS +
- *                       signature verification) against real tokens
+ *                     - OIDC discovery + the full auth flow against a real
+ *                       HTTP Cognito API
+ *                     - the runtime contract (JWKS + signature verification)
+ *                       against real tokens
  *                     - the AwsCognitoControlPlane adapter + toNormalizedPool
  *                       against real API responses
  *                   What it does NOT validate (real AWS only):
@@ -24,8 +24,9 @@
  *
  * Run:
  *   pnpm test:aws            # real AWS (gated)
- *   pnpm test:aws --local    # cognito-local emulator (needs Docker)
+ *   pnpm test:aws --local    # cognito-local emulator
  */
+import { spawn } from "node:child_process"
 import { execSync } from "node:child_process"
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
@@ -37,9 +38,8 @@ const mode = process.argv.includes("--local") ? "local" : "real"
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..")
 const suffix = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
 
-const EMULATOR_IMAGE = process.env.COGNITO_LOCAL_IMAGE ?? "jagregory/cognito-local:latest"
-const EMULATOR_CONTAINER = "cognito-kit-cognito-local"
 const EMULATOR_PORT = 9229
+const LOCAL_BIN = join(root, "node_modules", ".bin", "cognito-local")
 
 let failures = 0
 function check(name, condition, detail = "") {
@@ -73,10 +73,11 @@ async function waitFor(url, timeoutMs = 120000, label = url) {
 }
 
 /**
- * The flow shared by both modes: create a user, authenticate, verify the ID
- * token with the runtime contract, normalize, clean up.
+ * The flow shared by both modes: create a user, authenticate, then verify the
+ * ID token using the OIDC discovery document + JWKS — exactly how a real
+ * application consumes the auth contract.
  */
-async function runCognitoFlow({ client, poolId, clientId, issuer }) {
+async function runCognitoFlow({ client, poolId, clientId, discoveryUrl }) {
   const email = `ck-test-${suffix}@example.com`
   const password = "Ck-Test-12345!"
 
@@ -114,16 +115,22 @@ async function runCognitoFlow({ client, poolId, clientId, issuer }) {
   const idToken = auth.AuthenticationResult?.IdToken
   check("id token issued", Boolean(idToken))
 
-  console.log("\n3) Verify with the runtime contract (same as local-auth)")
-  const { createRemoteTokenVerifier, normalizeUser } = await import("@cognito-kit/runtime")
-  const verifier = createRemoteTokenVerifier({
-    issuer,
-    jwksUrl: `${issuer}/.well-known/jwks.json`,
-    audience: clientId,
+  console.log("\n3) Verify with the runtime contract (OIDC discovery + JWKS)")
+  const doc = await fetch(discoveryUrl).then((r) => {
+    if (!r.ok) throw new Error(`discovery failed: HTTP ${r.status}`)
+    return r.json()
   })
-  const { payload } = await verifier.verify(idToken)
+  if (!doc.issuer || !doc.jwks_uri) {
+    throw new Error(`discovery document at ${discoveryUrl} is missing issuer or jwks_uri`)
+  }
+  const { createRemoteTokenVerifier, normalizeUser } = await import("@cognito-kit/runtime")
+  const { payload } = await createRemoteTokenVerifier({
+    issuer: doc.issuer,
+    jwksUrl: doc.jwks_uri,
+    audience: clientId,
+  }).verify(idToken)
   const user = normalizeUser(payload)
-  check("issuer matches", payload.iss === issuer, String(payload.iss))
+  check("issuer from discovery matches token", payload.iss === doc.issuer, String(payload.iss))
   check("sub present", Boolean(user.id))
   check("email claim matches", user.email === email, String(user.email))
   check("email verified", user.emailVerified === true, String(user.emailVerified))
@@ -147,33 +154,28 @@ const EMULATOR_CONFIG = `userPool:
   region: us-east-1
   signingKey: testkey
   email: test@example.com
-  passwordPolicy:
-    minimumLength: 8
-    requireLowercase: true
-    requireNumbers: true
-    requireSymbols: false
-    requireUppercase: true
 `
 
 async function runLocal() {
-  console.log(`\ncognito-local emulator mode (image: ${EMULATOR_IMAGE})`)
-  console.log("No AWS account required.")
+  console.log("\ncognito-local emulator mode — no AWS account required.")
 
   let configDir
+  let emulator
   try {
-    // 1. Start the emulator in Docker.
-    execSync(`docker rm -f ${EMULATOR_CONTAINER} >/dev/null 2>&1 || true`)
+    // 1. Start the emulator as a local process in a scratch directory.
     configDir = mkdtempSync(join(tmpdir(), "ck-cognito-local-"))
     writeFileSync(join(configDir, "cognito-local.yml"), EMULATOR_CONFIG, "utf8")
-    run(
-      `docker run -d --name ${EMULATOR_CONTAINER} -p ${EMULATOR_PORT}:9229 -v ${configDir}/cognito-local.yml:/app/cognito-local.yml ${EMULATOR_IMAGE}`,
-    )
-    await waitFor(`http://localhost:${EMULATOR_PORT}/health`, 120000, "cognito-local")
+    emulator = spawn(LOCAL_BIN, [], {
+      cwd: configDir,
+      env: { ...process.env, PORT: String(EMULATOR_PORT) },
+      stdio: "inherit",
+    })
+    await waitFor(`http://localhost:${EMULATOR_PORT}/health`, 60000, "cognito-local")
 
     // 2. Create the pool + client via the Cognito API (the CDK template
     //    would create the same resources; CloudFormation itself is only
     //    exercised against real AWS). The create parameters mirror the
-    //    construct's safe defaults so the emulator echoes them back.
+    //    construct's safe defaults so the emulator surfaces them.
     const sdk = await import("@cognito-kit/aws/sdk")
     const client = new sdk.CognitoIdentityProviderClient({
       region: "us-east-1",
@@ -198,11 +200,15 @@ async function runLocal() {
       }),
     )
     const clientId = clientRes.UserPoolClient.ClientId
-    const issuer = `http://localhost:${EMULATOR_PORT}/${poolId}`
-    console.log(`\nPool: ${poolId}\nClient: ${clientId}\nIssuer: ${issuer}`)
+    console.log(`\nPool: ${poolId}\nClient: ${clientId}`)
 
-    // 3. The shared auth flow.
-    await runCognitoFlow({ client, poolId, clientId, issuer })
+    // 3. The shared auth flow (discovery-driven).
+    await runCognitoFlow({
+      client,
+      poolId,
+      clientId,
+      discoveryUrl: `http://localhost:${EMULATOR_PORT}/${poolId}/.well-known/openid-configuration`,
+    })
 
     // 4. The control-plane adapter against the emulator's HTTP API.
     console.log("\n5) Control-plane adapter against the emulator")
@@ -227,7 +233,7 @@ async function runLocal() {
     await client.send(new sdk.DeleteUserPoolCommand({ UserPoolId: poolId }))
     check("user pool deleted", true)
   } finally {
-    execSync(`docker rm -f ${EMULATOR_CONTAINER} >/dev/null 2>&1 || true`)
+    if (emulator) emulator.kill("SIGTERM")
     if (configDir) execSync(`rm -rf ${configDir}`)
   }
 }
@@ -248,6 +254,7 @@ async function runReal() {
 
   const stackName = `CognitoKitAwsTest${suffix}`
   const outputsFile = join(tmpdir(), `ck-aws-outputs-${suffix}.json`)
+  const { CognitoIdentityProviderClient } = await import("@cognito-kit/aws/sdk")
 
   let outputs
   try {
@@ -261,13 +268,11 @@ async function runReal() {
     console.log("\nStack outputs:")
     console.log(outputs)
 
-    const sdk = await import("@cognito-kit/aws/sdk")
-    const client = new sdk.CognitoIdentityProviderClient({ region })
     await runCognitoFlow({
-      client,
+      client: new CognitoIdentityProviderClient({ region }),
       poolId: outputs.UserPoolId,
       clientId: outputs.UserPoolClientId,
-      issuer: outputs.Issuer,
+      discoveryUrl: `${outputs.Issuer}/.well-known/openid-configuration`,
     })
   } finally {
     run(`npx aws-cdk destroy ${stackName} --app "node tests/aws/app.mjs" --force --region ${region}`)
@@ -289,6 +294,7 @@ async function main() {
     process.exit(1)
   }
   console.log("AWS tests passed")
+  process.exit(0)
 }
 
 main().catch((err) => {

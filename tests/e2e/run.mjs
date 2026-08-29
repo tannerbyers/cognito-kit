@@ -279,6 +279,9 @@ async function main() {
     },
     stdio: "inherit",
   })
+  nodeApi.on("error", (err) => {
+    console.error("node-api failed to spawn:", err)
+  })
 
   const nextEnv = {
     ...process.env,
@@ -302,6 +305,9 @@ async function main() {
     env: nextEnv,
     stdio: "inherit",
   })
+  nextStart.on("error", (err) => {
+    console.error("next.js failed to spawn:", err)
+  })
 
   try {
     await waitFor(`http://localhost:${NODE_API_PORT}/health`, 30000, "node-api")
@@ -320,6 +326,7 @@ async function main() {
     process.exit(1)
   }
   console.log("e2e passed")
+  process.exit(0)
 }
 
 main().catch((err) => {
