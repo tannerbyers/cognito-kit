@@ -8,7 +8,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "cognito-kit": "./dist/cli.js"
+    "cognito-kit": "./dist/bin.js"
   },
   "exports": {
     ".": {

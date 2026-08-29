@@ -39,7 +39,7 @@ export interface DiagnosticRule {
   check: (pool: NormalizedPoolConfig) => DiagnosticFinding[]
 }
 
-const DOCS_BASE = "https://github.com/cognito-kit/cognito-kit/blob/main/docs"
+const DOCS_BASE = "https://github.com/cognito-kit/cognito-kit/blob/main/docs/generated"
 
 function good(rule: DiagnosticRule, titleOverride?: string): DiagnosticFinding {
   return {

@@ -23,6 +23,7 @@
     "test:integration": "vitest run --project integration",
     "test:e2e": "pnpm build && node tests/e2e/run.mjs",
     "test:aws": "node tests/aws/run.mjs",
+    "docs:generate": "pnpm build && typedoc && node scripts/generate-docs.mjs",
     "dev": "node tests/e2e/demo.mjs"
   },
   "dependencies": {
@@ -44,6 +45,7 @@
     "jose": "^5.9.6",
     "prettier": "^3.4.2",
     "tsup": "^8.3.5",
+    "typedoc": "^0.28.0",
     "typescript": "^5.7.2",
     "vitest": "^3.0.0"
   },

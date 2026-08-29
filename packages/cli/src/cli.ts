@@ -73,5 +73,3 @@ function collect(value: string, previous: string[]): string[] {
   previous.push(value)
   return previous
 }
-
-buildProgram().parse()

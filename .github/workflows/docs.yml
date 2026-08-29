@@ -1,0 +1,42 @@
+name: Generate docs
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate docs
+        run: pnpm docs:generate
+
+      - name: Commit generated docs
+        run: |
+          git config user.name "cognito-kit docs"
+          git config user.email "docs@cognito-kit.dev"
+          git add docs/generated
+          if git diff --cached --quiet; then
+            echo "docs up to date"
+          else
+            git commit -m "docs: regenerate from code"
+            git push
+          fi
