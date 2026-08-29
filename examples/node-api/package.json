@@ -1,0 +1,13 @@
+{
+  "name": "@cognito-kit/example-node-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Node.js API example: protected endpoints that verify JWTs from cognito-kit local-auth (or Cognito).",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@cognito-kit/runtime": "workspace:*"
+  }
+}

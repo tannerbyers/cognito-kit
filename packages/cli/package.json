@@ -1,0 +1,36 @@
+{
+  "name": "cognito-kit",
+  "version": "0.1.0",
+  "description": "Cognito without learning Cognito. CLI for the cognito-kit developer toolkit.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "cognito-kit": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@cognito-kit/core": "workspace:*",
+    "@cognito-kit/local-auth": "workspace:*",
+    "commander": "^12.1.0",
+    "jiti": "^2.4.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "@cognito-kit/infrastructure",
+  "version": "0.1.0",
+  "description": "CDK constructs that synthesize safe, opinionated Cognito infrastructure from the cognito-kit config model.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@cognito-kit/core": "workspace:*",
+    "aws-cdk-lib": "^2.160.0",
+    "constructs": "^10.4.2"
+  },
+  "peerDependencies": {
+    "aws-cdk-lib": "^2.160.0",
+    "constructs": "^10.4.2"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "formatVersion": 1,
+  "provider": "cognito",
+  "name": "legacy-app",
+  "userPoolId": "us-east-1_Z9yXwVuTs",
+  "usernameConfiguration": { "caseSensitive": true },
+  "signIn": { "email": true, "username": false, "phone": false },
+  "autoVerifiedAttributes": [],
+  "verification": { "email": "optional", "phone": "disabled" },
+  "requiredAttributes": ["email", "name", "phone_number", "custom:role"],
+  "customAttributes": [
+    { "name": "role", "type": "string", "mutable": true, "required": true },
+    { "name": "plan", "type": "string", "mutable": true, "required": false },
+    { "name": "theme", "type": "string", "mutable": true, "required": false },
+    { "name": "onboarding_step", "type": "string", "mutable": true, "required": false }
+  ],
+  "mfaConfiguration": "OFF",
+  "accountRecovery": { "enabled": false, "methods": [] },
+  "appClient": {
+    "clientId": "3bcdefghijklmnopqrstuvwx",
+    "clientName": "legacy-app-app",
+    "generateSecret": false,
+    "callbackUrls": ["https://app.example.com/*", "http://insecure.example.com/callback"],
+    "logoutUrls": ["https://app.example.com"],
+    "allowedOAuthFlows": {
+      "authorizationCodeGrant": true,
+      "implicitFlow": true,
+      "clientCredentials": false,
+      "userPassword": true
+    },
+    "allowedOAuthScopes": ["openid", "email", "profile"],
+    "tokenValidity": { "idTokenMinutes": 480, "accessTokenMinutes": 1440, "refreshTokenDays": 90 }
+  },
+  "domain": { "prefix": "legacy-app-auth", "managedLogin": false },
+  "infrastructure": {
+    "provisionedBy": "console",
+    "deletionProtection": false,
+    "reproducible": false
+  },
+  "application": { "identity": "email", "storesProfileDataInCognito": true }
+}

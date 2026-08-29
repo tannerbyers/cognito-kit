@@ -1,0 +1,31 @@
+{
+  "formatVersion": 1,
+  "provider": "cognito",
+  "name": "username-signin",
+  "usernameConfiguration": { "caseSensitive": false },
+  "signIn": { "email": false, "username": true, "phone": false },
+  "autoVerifiedAttributes": [],
+  "verification": { "email": "optional", "phone": "disabled" },
+  "requiredAttributes": ["username"],
+  "customAttributes": [],
+  "mfaConfiguration": "OFF",
+  "accountRecovery": { "enabled": true, "methods": ["email"] },
+  "appClient": {
+    "clientId": "c2",
+    "clientName": "app",
+    "generateSecret": true,
+    "callbackUrls": ["https://app.example.com/auth/callback"],
+    "logoutUrls": ["https://app.example.com"],
+    "allowedOAuthFlows": {
+      "authorizationCodeGrant": true,
+      "implicitFlow": false,
+      "clientCredentials": false,
+      "userPassword": false
+    },
+    "allowedOAuthScopes": ["openid", "email", "profile"],
+    "tokenValidity": { "idTokenMinutes": 60, "accessTokenMinutes": 60, "refreshTokenDays": 30 }
+  },
+  "domain": { "prefix": "app-auth", "managedLogin": true },
+  "infrastructure": { "provisionedBy": "cdk", "deletionProtection": true, "reproducible": true },
+  "application": { "identity": "cognito_username", "storesProfileDataInCognito": false }
+}
