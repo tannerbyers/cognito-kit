@@ -52,3 +52,6 @@ jobs:
 
       - name: End-to-end tests
         run: pnpm test:e2e
+
+      - name: Local AWS emulator tests (cognito-local)
+        run: pnpm test:aws:local

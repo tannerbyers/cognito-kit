@@ -23,6 +23,7 @@
     "test:integration": "vitest run --project integration",
     "test:e2e": "pnpm build && node tests/e2e/run.mjs",
     "test:aws": "node tests/aws/run.mjs",
+    "test:aws:local": "node tests/aws/run.mjs --local",
     "docs:generate": "pnpm build && typedoc && node scripts/generate-docs.mjs",
     "changeset": "changeset",
     "version-packages": "changeset version && pnpm install --lockfile-only",

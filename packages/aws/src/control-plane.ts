@@ -9,6 +9,10 @@ import type { CognitoSdk } from "./types.js"
 export interface AwsCognitoControlPlaneOptions {
   /** AWS region. Defaults to the SDK's default resolution (env, config). */
   region?: string
+  /** Override the service endpoint (e.g. a local Cognito emulator). */
+  endpoint?: string
+  /** Explicit credentials (e.g. dummy credentials for a local emulator). */
+  credentials?: { accessKeyId: string; secretAccessKey: string }
   /** Inject a pre-built SDK (used by tests; otherwise created lazily). */
   sdk?: CognitoSdk
 }
@@ -145,7 +149,11 @@ export async function createAwsCognitoSdk(
     ListUserPoolsCommand,
     ListUserPoolClientsCommand,
   } = await import("@aws-sdk/client-cognito-identity-provider")
-  const client = new CognitoIdentityProviderClient({ region: options.region })
+  const client = new CognitoIdentityProviderClient({
+    region: options.region,
+    endpoint: options.endpoint,
+    credentials: options.credentials,
+  })
   return {
     describeUserPool: (input) => client.send(new DescribeUserPoolCommand(input)),
     describeUserPoolClient: (input) => client.send(new DescribeUserPoolClientCommand(input)),

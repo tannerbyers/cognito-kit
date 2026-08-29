@@ -15,7 +15,7 @@ const suffix = process.env.CK_TEST_SUFFIX ?? Date.now().toString(36)
 const region = process.env.AWS_REGION ?? process.env.AWS_DEFAULT_REGION ?? "us-east-1"
 
 const app = new App()
-new CognitoKitStack(app, stackName, {
+const stack = new CognitoKitStack(app, stackName, {
   env: { region },
   auth: {
     name: `cktest-${suffix}`,
@@ -27,4 +27,11 @@ new CognitoKitStack(app, stackName, {
     },
   },
 })
+
+// The test flow authenticates via AdminInitiateAuth, which requires the
+// admin password auth flow on the app client. This is test-only; the
+// construct's safe defaults intentionally do not enable it.
+const cfnClient = stack.auth.userPoolClient.node.defaultChild
+cfnClient.addPropertyOverride("ExplicitAuthFlows", ["ALLOW_ADMIN_USER_PASSWORD_AUTH"])
+
 app.synth()
