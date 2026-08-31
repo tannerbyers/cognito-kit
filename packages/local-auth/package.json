@@ -1,6 +1,6 @@
 {
   "name": "@cognito-kit/local-auth",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A small standards-based local OpenID Connect / OAuth2 development server. Not a Cognito emulator.",
   "license": "Apache-2.0",
   "type": "module",

@@ -1,6 +1,6 @@
 {
   "name": "@cognito-kit/runtime",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Tiny JWT verification and normalized authenticated-user utilities for Cognito, local-auth and any OIDC provider.",
   "license": "Apache-2.0",
   "type": "module",

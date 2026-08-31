@@ -1,6 +1,6 @@
 {
   "name": "@cognito-kit/testing",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Test helpers for applications that use the cognito-kit auth contract — no AWS required.",
   "license": "Apache-2.0",
   "type": "module",
