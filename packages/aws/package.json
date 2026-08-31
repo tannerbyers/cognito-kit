@@ -1,6 +1,6 @@
 {
   "name": "@cognito-kit/aws",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "AWS adapter for cognito-kit: control-plane implementation and normalized conversion for real Cognito.",
   "license": "Apache-2.0",
   "type": "module",

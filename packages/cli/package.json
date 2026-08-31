@@ -1,6 +1,6 @@
 {
   "name": "cognito-kit",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Cognito without learning Cognito. CLI for the cognito-kit developer toolkit.",
   "license": "Apache-2.0",
   "type": "module",
@@ -30,7 +30,7 @@
     "jiti": "^2.4.0"
   },
   "peerDependencies": {
-    "@cognito-kit/aws": ">=0.1.0"
+    "@cognito-kit/aws": ">=1.0.0"
   },
   "peerDependenciesMeta": {
     "@cognito-kit/aws": {
