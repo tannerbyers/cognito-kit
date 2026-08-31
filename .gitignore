@@ -8,4 +8,4 @@ coverage/
 *.local
 .env
 .env.*
-!.env.example
+!.env.examplecdk.out/

@@ -1,4 +1,5 @@
 import type { AuthConfig } from "./config.js"
+import { CURRENT_SCHEMA_VERSION } from "./config.js"
 import { isWildcardUrl, validateRedirectUrl } from "./urls.js"
 
 export type ConfigIssueSeverity = "error" | "warning"
@@ -16,6 +17,14 @@ export interface ConfigIssue {
  */
 export function validateAuthConfig(config: AuthConfig): ConfigIssue[] {
   const issues: ConfigIssue[] = []
+
+  if (config.schemaVersion !== undefined && config.schemaVersion !== CURRENT_SCHEMA_VERSION) {
+    issues.push({
+      path: "schemaVersion",
+      severity: "error",
+      message: `unsupported schemaVersion ${config.schemaVersion}; this version of cognito-kit supports ${CURRENT_SCHEMA_VERSION}`,
+    })
+  }
 
   if (config.signIn !== "email" && config.signIn !== "username") {
     issues.push({

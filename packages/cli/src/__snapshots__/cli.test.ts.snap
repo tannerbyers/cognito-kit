@@ -6,6 +6,7 @@ exports[`renderAuthConfigFile > renders a web starter config 1`] = `
 import { defineAuth } from "@cognito-kit/core"
 
 export default defineAuth({
+  schemaVersion: 1,
   name: "myapp",
   signIn: "email",
 

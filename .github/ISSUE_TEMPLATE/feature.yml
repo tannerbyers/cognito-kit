@@ -1,0 +1,18 @@
+---
+name: Feature request
+about: Suggest an improvement
+title: "[feature] "
+labels: enhancement
+---
+
+**Problem**
+
+What pain are you trying to solve?
+
+**Proposed solution**
+
+**Alternative approaches considered**
+
+**Is this about a Cognito trap?**
+If you are describing a dangerous/poor Cognito configuration: this belongs in
+`doctor`. See CONTRIBUTING.md → "Know a Cognito trap? Add a rule."

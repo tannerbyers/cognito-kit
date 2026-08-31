@@ -1,0 +1,29 @@
+---
+name: Bug report
+about: Something is wrong
+title: "[bug] "
+labels: bug
+---
+
+**What happened?**
+
+**What did you expect?**
+
+**Command / reproduction**
+
+```bash
+cognito-kit doctor --file ./my-pool.json
+```
+
+**Environment**
+
+- cognito-kit version:
+- Node.js version: `node --version`
+- Platform:
+- Docker used (for `--local`)? yes/no
+
+**Relevant configuration** (redact secrets)
+
+<!-- If this is a diagnostics/rule bug, paste the normalized pool or config. -->
+
+**AWS involvement**: local only / emulator / real AWS (`COGNITO_KIT_AWS_TESTS=1`)

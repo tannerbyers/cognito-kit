@@ -26,6 +26,7 @@
  *   pnpm test:aws            # real AWS (gated)
  *   pnpm test:aws --local    # cognito-local emulator
  */
+import { createHash, createHmac } from "node:crypto"
 import { spawn } from "node:child_process"
 import { execSync } from "node:child_process"
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs"
@@ -72,12 +73,35 @@ async function waitFor(url, timeoutMs = 120000, label = url) {
   throw new Error(`timed out waiting for ${label}`)
 }
 
+async function resolveAccountId() {
+  // Prefer CDK's default account resolution env vars, else ask STS.
+  if (process.env.CDK_DEFAULT_ACCOUNT) return process.env.CDK_DEFAULT_ACCOUNT
+  if (process.env.AWS_ACCOUNT_ID) return process.env.AWS_ACCOUNT_ID
+  try {
+    const out = execSync("aws sts get-caller-identity", { encoding: "utf8" })
+    return JSON.parse(out).Account
+  } catch {
+    return "unknown"
+  }
+}
+
+/**
+ * SECRET_HASH is required by real Cognito for confidential (web) clients
+ * using ADMIN_USER_PASSWORD_AUTH. cognito-local does not enforce it — which
+ * is why this only surfaces against real AWS.
+ */
+export function secretHash(clientId, clientSecret, username) {
+  return createHmac("sha256", clientSecret)
+    .update(username + clientId)
+    .digest("base64")
+}
+
 /**
  * The flow shared by both modes: create a user, authenticate, then verify the
  * ID token using the OIDC discovery document + JWKS — exactly how a real
  * application consumes the auth contract.
  */
-async function runCognitoFlow({ client, poolId, clientId, discoveryUrl }) {
+async function runCognitoFlow({ client, poolId, clientId, discoveryUrl, clientSecret }) {
   const email = `ck-test-${suffix}@example.com`
   const password = "Ck-Test-12345!"
 
@@ -104,12 +128,16 @@ async function runCognitoFlow({ client, poolId, clientId, discoveryUrl }) {
   check("user created", true)
 
   console.log("\n2) Authenticate and obtain an ID token")
+  const authParams = { USERNAME: email, PASSWORD: password }
+  if (clientSecret) {
+    authParams.SECRET_HASH = secretHash(clientId, clientSecret, email)
+  }
   const auth = await client.send(
     new (await import("@cognito-kit/aws/sdk")).AdminInitiateAuthCommand({
       UserPoolId: poolId,
       ClientId: clientId,
       AuthFlow: "ADMIN_USER_PASSWORD_AUTH",
-      AuthParameters: { USERNAME: email, PASSWORD: password },
+      AuthParameters: authParams,
     }),
   )
   const idToken = auth.AuthenticationResult?.IdToken
@@ -256,13 +284,18 @@ async function runReal() {
   const outputsFile = join(tmpdir(), `ck-aws-outputs-${suffix}.json`)
   const { CognitoIdentityProviderClient } = await import("@cognito-kit/aws/sdk")
 
+  // Resolve the account id from the live credentials so `cdk bootstrap`
+  // targets the right account.
+  const accountId = await resolveAccountId()
+
   let outputs
   try {
+    const appCmd = (cmd) => `CK_TEST_STACK=${stackName} ${cmd} --app "node tests/aws/app.mjs"`
     run(
-      `npx aws-cdk bootstrap aws://${process.env.AWS_ACCOUNT_ID ?? "unknown"}/${region} --region ${region}`,
+      `npx aws-cdk bootstrap aws://${accountId}/${region} --region ${region}`,
     )
     run(
-      `npx aws-cdk deploy ${stackName} --app "node tests/aws/app.mjs" --require-approval never --outputs-file ${outputsFile} --region ${region}`,
+      `${appCmd(`npx aws-cdk deploy ${stackName}`)} --require-approval never --outputs-file ${outputsFile} --region ${region}`,
     )
     outputs = JSON.parse(readFileSync(outputsFile, "utf8"))[stackName]
     console.log("\nStack outputs:")
@@ -271,11 +304,13 @@ async function runReal() {
     await runCognitoFlow({
       client: new CognitoIdentityProviderClient({ region }),
       poolId: outputs.UserPoolId,
-      clientId: outputs.UserPoolClientId,
+      // Use the secretless public client (see app.mjs) so the smoke test
+      // needs no SECRET_HASH plumbing.
+      clientId: outputs.SmokeTestClientId,
       discoveryUrl: `${outputs.Issuer}/.well-known/openid-configuration`,
     })
   } finally {
-    run(`npx aws-cdk destroy ${stackName} --app "node tests/aws/app.mjs" --force --region ${region}`)
+    run(`CK_TEST_STACK=${stackName} npx aws-cdk destroy ${stackName} --app "node tests/aws/app.mjs" --force --region ${region}`)
   }
 }
 

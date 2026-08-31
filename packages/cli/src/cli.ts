@@ -36,10 +36,13 @@ export function buildProgram(): Command {
   program
     .command("doctor")
     .description("Analyze a Cognito configuration and report dangerous or poor choices")
+    .option("--demo", "diagnose a built-in deliberately bad pool (offline)")
     .option("--file <path>", "path to a normalized pool JSON document")
     .option("--config <path>", "path to an auth.config.ts (developer-facing config)")
     .option("--pool <id>", "Cognito user pool id to diagnose (requires @cognito-kit/aws)")
     .option("--region <region>", "AWS region for --pool")
+    .option("--format <format>", 'output format: "pretty" or "json" (default: pretty)')
+    .option("--fail-on <severity>", 'exit non-zero at severity: "warning" or "critical" (default: critical)')
     .action((options: DoctorOptions) => {
       run(() => doctorCommand(options))
     })

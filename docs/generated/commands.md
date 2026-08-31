@@ -24,10 +24,13 @@ Analyze a Cognito configuration and report dangerous or poor choices
 
 Options:
 
+- `--demo` — diagnose a built-in deliberately bad pool (offline)
 - `--file <path>` — path to a normalized pool JSON document
 - `--config <path>` — path to an auth.config.ts (developer-facing config)
 - `--pool <id>` — Cognito user pool id to diagnose (requires @cognito-kit/aws)
 - `--region <region>` — AWS region for --pool
+- `--format <format>` — output format: "pretty" or "json" (default: pretty)
+- `--fail-on <severity>` — exit non-zero at severity: "warning" or "critical" (default: critical)
 
 ## dev
 

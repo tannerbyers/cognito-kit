@@ -45,6 +45,12 @@ export interface TokenSettings {
 }
 
 export interface AuthConfig {
+  /**
+   * Config schema version. Currently only `1` is supported (the default when
+   * omitted). Set this explicitly in config files so future versions can be
+   * detected and migrated.
+   */
+  schemaVersion?: number
   /** Human-readable name used as the user pool / resources prefix. Default `"app"`. */
   name?: string
   signIn: SignInMode
@@ -53,6 +59,9 @@ export interface AuthConfig {
 }
 
 export const DEFAULT_SCOPES = ["openid", "email", "profile"] as const
+
+/** The current config schema version. */
+export const CURRENT_SCHEMA_VERSION = 1
 
 export const DEFAULT_TOKEN_SETTINGS = {
   idTokenMinutes: 60,

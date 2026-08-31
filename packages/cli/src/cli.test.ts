@@ -182,6 +182,41 @@ describe("doctorCommand --pool", () => {
   })
 })
 
+describe("doctorCommand --demo", () => {
+  afterEach(() => {
+    process.exitCode = undefined
+  })
+
+  it("diagnoses a built-in bad pool offline", async () => {
+    const report = await doctorCommand({ demo: true })
+    expect(report.summary.critical).toBeGreaterThan(0)
+    expect(report.summary.warning).toBeGreaterThan(0)
+  })
+
+  it("sets exit code 1 when findings reach the fail-on threshold", async () => {
+    await doctorCommand({ demo: true, failOn: "critical" })
+    expect(process.exitCode).toBe(1)
+  })
+
+  it("defaults failOn to critical", async () => {
+    const report = await doctorCommand({ demo: true })
+    expect(report.summary.critical).toBeGreaterThan(0)
+    expect(process.exitCode).toBe(1)
+  })
+
+  it("outputs JSON with --format json", async () => {
+    const spy = vi.spyOn(console, "log").mockImplementation(() => undefined)
+    try {
+      await doctorCommand({ demo: true, format: "json" })
+      const output = spy.mock.calls[0][0] as string
+      const parsed = JSON.parse(output) as { summary: { critical: number } }
+      expect(parsed.summary.critical).toBeGreaterThan(0)
+    } finally {
+      spy.mockRestore()
+    }
+  })
+})
+
 describe("migrateCommand", () => {
   afterEach(() => {
     process.exitCode = undefined

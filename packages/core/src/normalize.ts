@@ -48,6 +48,8 @@ export type AccountRecoveryMethod = "email" | "phone" | "admin_only"
 
 export interface NormalizedPoolConfig {
   formatVersion: 1
+  /** Schema version of the config this document was derived from. */
+  schemaVersion: 1
   provider: "cognito"
   /** Human-readable pool name. */
   name: string
@@ -100,6 +102,9 @@ export interface NormalizedPoolConfig {
 
 export const DEFAULT_APP_CLIENT_ID = "dev-client"
 
+/** The schema version emitted by `normalizeConfig`. */
+export const DEFAULT_CONFIG_SCHEMA_VERSION = 1 as const
+
 /**
  * Applies the safe, opinionated defaults and converts a developer-facing
  * {@link AuthConfig} into a normalized, plain-JSON pool configuration.
@@ -112,6 +117,9 @@ export function normalizeConfig(config: AuthConfig): NormalizedPoolConfig {
   const name = config.name ?? "app"
   const token = tokenSettingsOf(config)
   const scopes = [...(config.application.scopes ?? DEFAULT_SCOPES)]
+  // Config schemaVersion defaults to 1; NormalizedPoolConfig carries the
+  // literal type `1`, so coerce after validation guarantees a supported value.
+  const schemaVersion = (config.schemaVersion ?? DEFAULT_CONFIG_SCHEMA_VERSION) as 1
 
   const emailSignIn = config.signIn === "email"
 
@@ -179,6 +187,7 @@ export function normalizeConfig(config: AuthConfig): NormalizedPoolConfig {
       identity: "cognito_sub",
       storesProfileDataInCognito: false,
     },
+    schemaVersion,
   }
 }
 

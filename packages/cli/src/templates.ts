@@ -38,6 +38,7 @@ export function renderAuthConfigFile(options: InitTemplateOptions): string {
 import { defineAuth } from "@cognito-kit/core"
 
 export default defineAuth({
+  schemaVersion: 1,
   name: ${JSON.stringify(options.name)},
   signIn: ${JSON.stringify(options.signIn)},
 

@@ -1,80 +1,10 @@
 import type { NormalizedPoolConfig } from "./normalize.js"
 import { normalizeConfig } from "./normalize.js"
 import { isWildcardUrl, validateRedirectUrl } from "./urls.js"
-
-/**
- * The diagnostics engine.
- *
- * Pure functions over a normalized plain-object pool configuration. It has no
- * knowledge of AWS, the network, or the CLI — which is exactly why it can be
- * exhaustively unit tested offline and reused by the `doctor` command for both
- * local fixtures and (in the future) real AWS state.
- */
-
-export type FindingStatus = "good" | "warning" | "critical"
-
-export interface DiagnosticFinding {
-  ruleId: string
-  status: FindingStatus
-  title: string
-  explanation: string
-  recommendation: string
-  docsUrl?: string
-  /** Optional machine-usable detail (e.g. the offending URL). */
-  detail?: string
-}
-
-export interface DiagnosticReport {
-  findings: DiagnosticFinding[]
-  summary: { good: number; warning: number; critical: number }
-}
-
-export interface DiagnosticRule {
-  id: string
-  severity: Exclude<FindingStatus, "good">
-  title: string
-  explanation: string
-  recommendation: string
-  docsUrl?: string
-  check: (pool: NormalizedPoolConfig) => DiagnosticFinding[]
-}
+import { crit, diagnoseWithRules, good, warn } from "./rules.js"
+import type { DiagnosticFinding, DiagnosticReport, DiagnosticRule } from "./rules.js"
 
 const DOCS_BASE = "https://github.com/cognito-kit/cognito-kit/blob/main/docs/generated"
-
-function good(rule: DiagnosticRule, titleOverride?: string): DiagnosticFinding {
-  return {
-    ruleId: rule.id,
-    status: "good",
-    title: titleOverride ?? rule.title,
-    explanation: rule.explanation,
-    recommendation: rule.recommendation,
-    docsUrl: rule.docsUrl,
-  }
-}
-
-function warn(rule: DiagnosticRule, detail?: string, titleOverride?: string): DiagnosticFinding {
-  return {
-    ruleId: rule.id,
-    status: "warning",
-    title: titleOverride ?? rule.title,
-    explanation: rule.explanation,
-    recommendation: rule.recommendation,
-    docsUrl: rule.docsUrl,
-    detail,
-  }
-}
-
-function crit(rule: DiagnosticRule, detail?: string, titleOverride?: string): DiagnosticFinding {
-  return {
-    ruleId: rule.id,
-    status: "critical",
-    title: titleOverride ?? rule.title,
-    explanation: rule.explanation,
-    recommendation: rule.recommendation,
-    docsUrl: rule.docsUrl,
-    detail,
-  }
-}
 
 /* ------------------------------------------------------------------ */
 /* Rules                                                               */
@@ -431,13 +361,7 @@ export const DIAGNOSTIC_RULES: readonly DiagnosticRule[] = [
 
 /** Runs every rule against a normalized pool configuration. */
 export function diagnoseUserPool(pool: NormalizedPoolConfig): DiagnosticReport {
-  const findings = DIAGNOSTIC_RULES.flatMap((rule) => rule.check(pool))
-  const summary = {
-    good: findings.filter((f) => f.status === "good").length,
-    warning: findings.filter((f) => f.status === "warning").length,
-    critical: findings.filter((f) => f.status === "critical").length,
-  }
-  return { findings, summary }
+  return diagnoseWithRules(pool, DIAGNOSTIC_RULES)
 }
 
 /** Convenience: diagnose a developer-facing config after normalizing it. */

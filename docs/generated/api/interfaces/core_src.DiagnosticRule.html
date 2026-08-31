@@ -11,9 +11,9 @@
 <li><a href="../modules/core_src.html">core/src</a></li>
 <li><a href="" aria-current="page">DiagnosticRule</a></li></ul>
 <h1>Interface DiagnosticRule</h1></div>
-<div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">DiagnosticRule</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#check">check</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">pool</span><span class="tsd-signature-symbol">:</span> <a href="core_src.NormalizedPoolConfig.html" class="tsd-signature-type tsd-kind-interface">NormalizedPoolConfig</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <a href="core_src.DiagnosticFinding.html" class="tsd-signature-type tsd-kind-interface">DiagnosticFinding</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#docsurl">docsUrl</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#explanation">explanation</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#id">id</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#recommendation">recommendation</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#severity">severity</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;warning&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;critical&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#title">title</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
+<div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">DiagnosticRule</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#check">check</a><span class="tsd-signature-symbol">:</span> <a href="core_src.DiagnosticRuleCheck.html" class="tsd-signature-type tsd-kind-interface">DiagnosticRuleCheck</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#docsurl">docsUrl</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#explanation">explanation</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#id">id</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#recommendation">recommendation</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#severity">severity</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;warning&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;critical&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#title">title</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/tannerbyers/cognito-kit/blob/main/packages/core/src/diagnose.ts#L32">core/src/diagnose.ts:32</a></li></ul></aside>
+<li>Defined in core/src/rules.ts:50</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -34,39 +34,39 @@
 <section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="check"><span>check</span><a href="#check" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">check</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">pool</span><span class="tsd-signature-symbol">:</span> <a href="core_src.NormalizedPoolConfig.html" class="tsd-signature-type tsd-kind-interface">NormalizedPoolConfig</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <a href="core_src.DiagnosticFinding.html" class="tsd-signature-type tsd-kind-interface">DiagnosticFinding</a><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
+<div class="tsd-signature"><span class="tsd-kind-property">check</span><span class="tsd-signature-symbol">:</span> <a href="core_src.DiagnosticRuleCheck.html" class="tsd-signature-type tsd-kind-interface">DiagnosticRuleCheck</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/tannerbyers/cognito-kit/blob/main/packages/core/src/diagnose.ts#L39">core/src/diagnose.ts:39</a></li></ul></aside></section>
+<li>Defined in core/src/rules.ts:57</li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="docsurl"><code class="tsd-tag">Optional</code><span>docs<wbr/>Url</span><a href="#docsurl" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">docsUrl</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/tannerbyers/cognito-kit/blob/main/packages/core/src/diagnose.ts#L38">core/src/diagnose.ts:38</a></li></ul></aside></section>
+<li>Defined in core/src/rules.ts:56</li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="explanation"><span>explanation</span><a href="#explanation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">explanation</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/tannerbyers/cognito-kit/blob/main/packages/core/src/diagnose.ts#L36">core/src/diagnose.ts:36</a></li></ul></aside></section>
+<li>Defined in core/src/rules.ts:54</li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="id"><span>id</span><a href="#id" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">id</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/tannerbyers/cognito-kit/blob/main/packages/core/src/diagnose.ts#L33">core/src/diagnose.ts:33</a></li></ul></aside></section>
+<li>Defined in core/src/rules.ts:51</li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="recommendation"><span>recommendation</span><a href="#recommendation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">recommendation</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/tannerbyers/cognito-kit/blob/main/packages/core/src/diagnose.ts#L37">core/src/diagnose.ts:37</a></li></ul></aside></section>
+<li>Defined in core/src/rules.ts:55</li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="severity"><span>severity</span><a href="#severity" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">severity</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;warning&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;critical&quot;</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/tannerbyers/cognito-kit/blob/main/packages/core/src/diagnose.ts#L34">core/src/diagnose.ts:34</a></li></ul></aside></section>
+<li>Defined in core/src/rules.ts:52</li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="title"><span>title</span><a href="#title" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">title</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/tannerbyers/cognito-kit/blob/main/packages/core/src/diagnose.ts#L35">core/src/diagnose.ts:35</a></li></ul></aside></section></section></details></div>
+<li>Defined in core/src/rules.ts:53</li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

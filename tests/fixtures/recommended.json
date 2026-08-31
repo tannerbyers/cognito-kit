@@ -3,14 +3,32 @@
   "provider": "cognito",
   "name": "myapp",
   "userPoolId": "us-east-1_AbCdEfGhI",
-  "usernameConfiguration": { "caseSensitive": false },
-  "signIn": { "email": true, "username": false, "phone": false },
-  "autoVerifiedAttributes": ["email"],
-  "verification": { "email": "required", "phone": "disabled" },
-  "requiredAttributes": ["email"],
+  "usernameConfiguration": {
+    "caseSensitive": false
+  },
+  "signIn": {
+    "email": true,
+    "username": false,
+    "phone": false
+  },
+  "autoVerifiedAttributes": [
+    "email"
+  ],
+  "verification": {
+    "email": "required",
+    "phone": "disabled"
+  },
+  "requiredAttributes": [
+    "email"
+  ],
   "customAttributes": [],
   "mfaConfiguration": "OFF",
-  "accountRecovery": { "enabled": true, "methods": ["email"] },
+  "accountRecovery": {
+    "enabled": true,
+    "methods": [
+      "email"
+    ]
+  },
   "appClient": {
     "clientId": "2abcdefghijklmnopqrstuvw",
     "clientName": "myapp-app",
@@ -19,21 +37,39 @@
       "http://localhost:3000/auth/callback",
       "https://app.example.com/auth/callback"
     ],
-    "logoutUrls": ["http://localhost:3000", "https://app.example.com"],
+    "logoutUrls": [
+      "http://localhost:3000",
+      "https://app.example.com"
+    ],
     "allowedOAuthFlows": {
       "authorizationCodeGrant": true,
       "implicitFlow": false,
       "clientCredentials": false,
       "userPassword": false
     },
-    "allowedOAuthScopes": ["openid", "email", "profile"],
-    "tokenValidity": { "idTokenMinutes": 60, "accessTokenMinutes": 60, "refreshTokenDays": 30 }
+    "allowedOAuthScopes": [
+      "openid",
+      "email",
+      "profile"
+    ],
+    "tokenValidity": {
+      "idTokenMinutes": 60,
+      "accessTokenMinutes": 60,
+      "refreshTokenDays": 30
+    }
   },
-  "domain": { "prefix": "myapp-auth", "managedLogin": true },
+  "domain": {
+    "prefix": "myapp-auth",
+    "managedLogin": true
+  },
   "infrastructure": {
     "provisionedBy": "cdk",
     "deletionProtection": true,
     "reproducible": true
   },
-  "application": { "identity": "cognito_sub", "storesProfileDataInCognito": false }
+  "application": {
+    "identity": "cognito_sub",
+    "storesProfileDataInCognito": false
+  },
+  "schemaVersion": 1
 }

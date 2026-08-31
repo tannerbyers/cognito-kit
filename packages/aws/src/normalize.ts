@@ -61,6 +61,7 @@ export function toNormalizedPool(
 
   return {
     formatVersion: 1,
+    schemaVersion: 1,
     provider: "cognito",
     name: pool.name,
     userPoolId: pool.userPoolId,
