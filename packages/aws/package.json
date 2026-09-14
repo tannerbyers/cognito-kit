@@ -26,7 +26,7 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@aws-sdk/client-cognito-identity-provider": "^3.600.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.1130.0",
     "@cognito-kit/core": "workspace:*"
   },
   "devDependencies": {

@@ -22,11 +22,11 @@
   },
   "dependencies": {
     "@cognito-kit/core": "workspace:*",
-    "aws-cdk-lib": "^2.160.0",
+    "aws-cdk-lib": "^2.269.0",
     "constructs": "^10.4.2"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "^2.160.0",
+    "aws-cdk-lib": "^2.269.0",
     "constructs": "^10.4.2"
   },
   "devDependencies": {
